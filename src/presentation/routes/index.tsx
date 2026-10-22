@@ -1,6 +1,4 @@
-import React from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { z } from 'zod'
 import { HeroBanner } from '../components/catalog/HeroBanner'
 import { CatalogFilters } from '../components/catalog/CatalogFilters'
 import { NftCard } from '../components/catalog/NftCard'
@@ -9,22 +7,32 @@ import { Skeleton } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { useNftsQuery } from '../../application/nft/useNfts'
 import { NftFilterParams } from '../../domain/nft/types'
-import { ChevronLeft, ChevronRight, SlidersHorizontal, RefreshCw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
 
-// URL search params schema with Zod validation
-const catalogSearchSchema = z.object({
-  search: z.string().optional(),
-  collection: z.string().optional(),
-  priceMin: z.string().optional(),
-  priceMax: z.string().optional(),
-  network: z.string().optional(),
-  sortBy: z.enum(['recent', 'price_asc', 'price_desc', 'popular']).optional(),
-  page: z.number().int().positive().optional().default(1),
-  limit: z.number().int().positive().optional().default(8),
-})
+export interface CatalogSearch {
+  search?: string
+  collection?: string
+  priceMin?: string
+  priceMax?: string
+  network?: string
+  sortBy?: 'recent' | 'price_asc' | 'price_desc' | 'popular'
+  page?: number
+  limit?: number
+}
 
 export const Route = createFileRoute('/')({
-  validateSearch: (search) => catalogSearchSchema.parse(search),
+  validateSearch: (search: Record<string, unknown> = {}): CatalogSearch => ({
+    search: typeof search.search === 'string' && search.search ? search.search : undefined,
+    collection: typeof search.collection === 'string' && search.collection ? search.collection : undefined,
+    priceMin: typeof search.priceMin === 'string' && search.priceMin ? search.priceMin : undefined,
+    priceMax: typeof search.priceMax === 'string' && search.priceMax ? search.priceMax : undefined,
+    network: typeof search.network === 'string' && search.network ? search.network : undefined,
+    sortBy: (['recent', 'price_asc', 'price_desc', 'popular'] as const).includes(search.sortBy as any)
+      ? (search.sortBy as 'recent' | 'price_asc' | 'price_desc' | 'popular')
+      : undefined,
+    page: Number(search.page) > 0 ? Number(search.page) : undefined,
+    limit: Number(search.limit) > 0 ? Number(search.limit) : undefined,
+  }),
   component: HomePage,
 })
 
@@ -32,13 +40,31 @@ function HomePage() {
   const searchParams = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
-  const { data, isLoading, isError, refetch } = useNftsQuery(searchParams as NftFilterParams)
+  const effectiveParams: NftFilterParams = {
+    ...searchParams,
+    page: searchParams.page ?? 1,
+    limit: searchParams.limit ?? 8,
+  }
 
-  const handleFilterUpdate = (newFilters: Partial<typeof searchParams>) => {
+  const { data, isLoading, isError, refetch } = useNftsQuery(effectiveParams)
+
+  const handleFilterUpdate = (newFilters: {
+    collection?: string
+    sortBy?: 'recent' | 'price_asc' | 'price_desc' | 'popular' | string
+    search?: string
+    network?: string
+    priceMin?: string
+    priceMax?: string
+    page?: number
+    limit?: number
+  }) => {
     navigate({
       search: (prev) => ({
         ...prev,
         ...newFilters,
+        sortBy: (['recent', 'price_asc', 'price_desc', 'popular'] as const).includes(newFilters.sortBy as any)
+          ? (newFilters.sortBy as 'recent' | 'price_asc' | 'price_desc' | 'popular')
+          : prev.sortBy,
       }),
     })
   }

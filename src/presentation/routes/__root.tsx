@@ -1,4 +1,3 @@
-import React from 'react'
 import { createRootRoute, Outlet, ScrollRestoration } from '@tanstack/react-router'
 import { Header } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'

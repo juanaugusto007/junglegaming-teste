@@ -11,7 +11,7 @@ export const Route = createFileRoute('/profile')({
 
 function ProfilePage() {
   const navigate = useNavigate()
-  const { user, isAuthenticated, updateProfile, isUpdatingProfile, changePassword, isChangingPassword, logout } = useAuth()
+  const { user, updateProfile, isUpdatingProfile, changePassword, isChangingPassword, logout } = useAuth()
 
   const [displayName, setDisplayName] = useState(user?.displayName || 'Alex Vance')
   const [email, setEmail] = useState(user?.email || 'contato@email.com')

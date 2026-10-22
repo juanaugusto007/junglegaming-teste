@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Heart, Star, Share2, ShieldCheck, Check, AlertCircle } from 'lucide-react'
+import { Heart, Star, Share2, Check, AlertCircle } from 'lucide-react'
 import { useNftDetailQuery, useToggleFavoriteMutation } from '../../application/nft/useNfts'
 import { useCart } from '../../application/cart/useCart'
 import { Button } from '../components/ui/Button'
@@ -87,7 +87,7 @@ function NftDetailPage() {
           Início
         </Link>
         <span>/</span>
-        <Link to="/" search={{ collection: 'Todos os NFTs' }} className="hover:text-brand transition-colors">
+        <Link to="/" search={{ collection: 'Todos os NFTs', page: 1, limit: 8 }} className="hover:text-brand transition-colors">
           Mercado
         </Link>
         <span>/</span>

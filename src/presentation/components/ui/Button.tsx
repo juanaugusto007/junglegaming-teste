@@ -1,11 +1,7 @@
 import React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: any[]) {
-  return twMerge(clsx(inputs))
-}
+import { cn } from '../../styles/utils'
+export { cn }
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer',

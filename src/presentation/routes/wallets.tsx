@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useWallets } from '../../application/wallet/useWallets'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
-import { Plus, Check, ShieldCheck, Wallet } from 'lucide-react'
+import { Plus, Check } from 'lucide-react'
 
 export const Route = createFileRoute('/wallets')({
   component: WalletsPage,

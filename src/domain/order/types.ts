@@ -1,4 +1,4 @@
-import { CartItem, Coupon } from '../cart/types'
+import { Coupon } from '../cart/types'
 
 export type OrderStatus = 'pending' | 'confirmed' | 'rejected' | 'failed'
 

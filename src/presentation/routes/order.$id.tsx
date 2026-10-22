@@ -1,6 +1,5 @@
-import React from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle2, ExternalLink, ArrowRight, ShieldCheck } from 'lucide-react'
+import { CheckCircle2, ExternalLink, ArrowRight } from 'lucide-react'
 import { useOrderDetail } from '../../application/order/useOrder'
 import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Badge'

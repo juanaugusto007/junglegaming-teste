@@ -1,6 +1,6 @@
-import React, { useState, useId } from 'react'
+import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ShieldCheck, Check, AlertTriangle, ArrowLeft } from 'lucide-react'
+import { AlertTriangle, ArrowLeft } from 'lucide-react'
 import { useCart } from '../../application/cart/useCart'
 import { useAuth } from '../../application/identity/useAuth'
 import { useWallets } from '../../application/wallet/useWallets'
@@ -23,7 +23,7 @@ function generateUuid(): string {
 function CheckoutPage() {
   const navigate = useNavigate()
   const { quote } = useCart()
-  const { user, isAuthenticated } = useAuth()
+  const { user } = useAuth()
   const { wallets } = useWallets()
   const createOrder = useCreateOrder()
 
@@ -108,7 +108,7 @@ function CheckoutPage() {
           Início
         </Link>
         <span>/</span>
-        <Link to="/" search={{ collection: 'Todos os NFTs' }} className="hover:text-brand transition-colors">
+        <Link to="/" search={{ collection: 'Todos os NFTs', page: 1, limit: 8 }} className="hover:text-brand transition-colors">
           Mercado
         </Link>
         <span>/</span>

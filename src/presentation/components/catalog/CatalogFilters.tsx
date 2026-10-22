@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { Search, ChevronDown } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 interface CatalogFiltersProps {
   currentCollection?: string
-  currentSort?: string
+  currentSort?: 'recent' | 'price_asc' | 'price_desc' | 'popular' | string
   currentSearch?: string
   currentNetwork?: string
   priceMin?: string
   priceMax?: string
   onFilterChange: (filters: {
     collection?: string
-    sortBy?: string
+    sortBy?: 'recent' | 'price_asc' | 'price_desc' | 'popular' | string
     search?: string
     network?: string
     priceMin?: string
@@ -41,7 +41,6 @@ const NETWORKS_LIST = [
 
 export const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   currentCollection = 'Todos os NFTs',
-  currentSort = 'recent',
   currentSearch = '',
   currentNetwork = '',
   priceMin = '',
