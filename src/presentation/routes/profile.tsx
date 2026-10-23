@@ -194,10 +194,11 @@ function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               {/* Left Column: Nome de exibição */}
               <div>
-                <label className="block text-xs font-mono text-text-primary mb-2">
+                <label htmlFor="display-name" className="block text-xs font-mono text-text-primary mb-2">
                   Nome de exibição<span className="text-brand ml-0.5">*</span>
                 </label>
                 <input
+                  id="display-name"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
@@ -209,10 +210,11 @@ function ProfilePage() {
 
               {/* Right Column: Nome de usuário */}
               <div>
-                <label className="block text-xs font-mono text-text-primary mb-2">
+                <label htmlFor="username" className="block text-xs font-mono text-text-primary mb-2">
                   Nome de usuário<span className="text-brand ml-0.5">*</span>
                 </label>
                 <input
+                  id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -224,10 +226,11 @@ function ProfilePage() {
 
               {/* Left Column: E-mail */}
               <div>
-                <label className="block text-xs font-mono text-text-primary mb-2">
+                <label htmlFor="email" className="block text-xs font-mono text-text-primary mb-2">
                   E-mail<span className="text-brand ml-0.5">*</span>
                 </label>
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -239,7 +242,7 @@ function ProfilePage() {
 
               {/* Right Column: Nome ENS */}
               <div>
-                <label className="block text-xs font-mono text-text-primary mb-2">
+                <label htmlFor="ens-name" className="block text-xs font-mono text-text-primary mb-2">
                   Nome ENS <span className="text-brand">*</span>
                 </label>
                 <div className="flex h-12 w-full">
@@ -258,6 +261,7 @@ function ProfilePage() {
                     </span>
                   </div>
                   <input
+                    id="ens-name"
                     type="text"
                     value={ensPrefix}
                     onChange={(e) => setEnsPrefix(e.target.value)}
@@ -269,10 +273,11 @@ function ProfilePage() {
 
               {/* Left Column: Apelido da carteira */}
               <div>
-                <label className="block text-xs font-mono text-text-primary mb-2">
+                <label htmlFor="wallet-nickname" className="block text-xs font-mono text-text-primary mb-2">
                   Apelido da carteira<span className="text-brand ml-0.5">*</span>
                 </label>
                 <input
+                  id="wallet-nickname"
                   type="text"
                   value={walletNickname}
                   onChange={(e) => setWalletNickname(e.target.value)}
