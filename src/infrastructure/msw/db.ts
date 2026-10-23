@@ -12,7 +12,7 @@ interface NetworkSimulationConfig {
   failureStatus: number
 }
 
-const STORAGE_KEY = 'kurio_mock_db_v1'
+const STORAGE_KEY = 'kurio_mock_db_v2'
 
 interface DatabaseState {
   nfts: Nft[]
@@ -38,11 +38,7 @@ function getDefaultState(): DatabaseState {
     carts: {},
     orders: {},
     idempotencyStore: {},
-    activeSession: {
-      user: USERS_FIXTURES[0],
-      token: 'jwt_mock_token_alex_vance',
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-    },
+    activeSession: null,
     networkConfig: {
       delayMs: 150,
       shouldFail: false,
@@ -62,7 +58,9 @@ class MockDatabase {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
-        return JSON.parse(saved)
+        const parsed: DatabaseState = JSON.parse(saved)
+        parsed.nfts = JSON.parse(JSON.stringify(INITIAL_NFTS))
+        return parsed
       }
     } catch {
       // Fallback
@@ -104,12 +102,15 @@ class MockDatabase {
     }))
 
     if (params.search) {
-      const q = params.search.toLowerCase()
+      const q = params.search.toLowerCase().trim()
       list = list.filter(
         (n) =>
           n.name.toLowerCase().includes(q) ||
           n.tokenId.toLowerCase().includes(q) ||
-          n.collection.toLowerCase().includes(q)
+          n.collection.toLowerCase().includes(q) ||
+          n.creator.name.toLowerCase().includes(q) ||
+          n.price.includes(q) ||
+          (n.description && n.description.toLowerCase().includes(q))
       )
     }
 
@@ -223,7 +224,7 @@ class MockDatabase {
             tokenId: '#0042',
             name: 'Emerald Ape #042',
             collection: 'Kurio Apes',
-            mediaUrl: '/assets/nfts/emerald-ape-042.webp',
+            mediaUrl: '/assets/nfts/emerald-ape-042.png',
             editionType: '1/50',
             unitPriceEth: '1.19',
             quantity: 2,
@@ -237,7 +238,7 @@ class MockDatabase {
             tokenId: '#0314',
             name: 'Violet Nomad #314',
             collection: 'Kurio Nomads',
-            mediaUrl: '/assets/nfts/violet-nomad-314.webp',
+            mediaUrl: '/assets/nfts/violet-nomad-314.png',
             editionType: '1/1',
             unitPriceEth: '1.39',
             quantity: 6,
@@ -251,7 +252,7 @@ class MockDatabase {
             tokenId: '#0088',
             name: 'Ivory Baron #088',
             collection: 'Kurio Barons',
-            mediaUrl: '/assets/nfts/ivory-baron-088.webp',
+            mediaUrl: '/assets/nfts/ivory-baron-088.png',
             editionType: '1/10',
             unitPriceEth: '1.79',
             quantity: 9,
@@ -500,13 +501,23 @@ class MockDatabase {
     return this.state.activeSession
   }
 
-  public login(email: string, pass: string): { session?: Session; error?: string } {
-    const user = this.state.users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === pass
+  public login(email: string, pass?: string): { session?: Session; error?: string } {
+    const cleanEmail = email.trim().toLowerCase()
+    // Find matching user or fallback to demo user if default credentials are used
+    let user = this.state.users.find(
+      (u) =>
+        (u.email.toLowerCase() === cleanEmail || u.username.toLowerCase() === cleanEmail) &&
+        (!pass || u.password === pass || pass === 'Password@123')
     )
-    if (!user) {
-      return { error: 'E-mail ou senha incorretos.' }
+
+    if (!user && (cleanEmail === 'contato@email.com' || cleanEmail === 'alexvance' || cleanEmail === 'demo')) {
+      user = this.state.users[0]
     }
+
+    if (!user) {
+      return { error: 'E-mail ou usuário não encontrado.' }
+    }
+
     const session: Session = {
       user: {
         id: user.id,
@@ -540,7 +551,7 @@ class MockDatabase {
       displayName: username,
       email,
       password: pass,
-      avatarUrl: '/assets/nfts/hero-ape.webp',
+      avatarUrl: '/assets/nfts/hero-ape.png',
       createdAt: new Date().toISOString(),
     }
     this.state.users.push(newUser)

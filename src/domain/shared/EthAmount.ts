@@ -25,7 +25,8 @@ export class EthAmount {
   }
 
   public static fromString(val: string): EthAmount {
-    return new EthAmount(val || '0')
+    const sanitized = (val || '0').trim().replace(',', '.')
+    return new EthAmount(sanitized)
   }
 
   public static fromNumber(val: number): EthAmount {

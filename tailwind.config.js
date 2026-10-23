@@ -38,8 +38,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['Space Mono', 'JetBrains Mono', 'monospace'],
-        display: ['Inter', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
+        display: ['"Space Mono"', '"Space Grotesk"', 'monospace'],
       },
       keyframes: {
         shimmer: {

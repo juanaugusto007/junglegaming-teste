@@ -1,53 +1,71 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { Search, ShoppingBag, LogIn, User, LogOut, Menu, X, Wallet } from 'lucide-react'
 import { useAuth } from '../../../application/identity/useAuth'
 import { useCart } from '../../../application/cart/useCart'
 import { Button } from '../ui/Button'
+import { AuthModal } from '../common/AuthModal'
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const { quote } = useCart()
   const navigate = useNavigate()
+  const routerState = useRouterState()
+  const currentPath = routerState.location.pathname
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
 
   const cartItemCount = quote?.items.reduce((acc, item) => acc + item.quantity, 0) || 0
 
+  const isHomeActive = currentPath === '/'
+  const isMarketActive = currentPath.startsWith('/nft') || (currentPath === '/' && routerState.location.searchStr.includes('collection'))
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-surface-border bg-background/95 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4 relative">
         {/* Brand Logo */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="text-2xl font-black tracking-widest text-text-primary group-hover:text-brand transition-colors">
+            <span className="text-2xl font-black tracking-widest text-text-primary group-hover:text-brand transition-colors font-mono">
               KURIO
             </span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
-            <Link
-              to="/"
-              className="text-text-secondary hover:text-text-primary transition-colors [&.active]:text-brand [&.active]:border-b-2 [&.active]:border-brand pb-1"
-            >
-              Início
-            </Link>
-            <Link
-              to="/"
-              search={{ collection: 'Todos os NFTs' }}
-              className="text-brand font-semibold hover:text-brand-light transition-colors pb-1 border-b-2 border-brand"
-            >
-              Mercado
-            </Link>
-            <span className="text-text-muted hover:text-text-secondary cursor-pointer transition-colors">
-              Criadores
-            </span>
-            <span className="text-text-muted hover:text-text-secondary cursor-pointer transition-colors">
-              Aprenda
-            </span>
-          </nav>
         </div>
+
+        {/* Desktop Navigation - Centered (Figma Page 0) */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-mono font-medium absolute left-1/2 -translate-x-1/2">
+          <Link
+            to="/"
+            className={`transition-colors pb-1 ${isHomeActive && !isMarketActive
+              ? 'text-brand font-bold border-b-2 border-brand'
+              : 'text-text-secondary hover:text-text-primary'
+              }`}
+          >
+            Início
+          </Link>
+          <Link
+            to="/"
+            search={{ collection: 'Todos os NFTs' }}
+            onClick={() => {
+              setTimeout(() => {
+                document.getElementById('marketplace-catalog')?.scrollIntoView({ behavior: 'smooth' })
+              }, 100)
+            }}
+            className={`transition-colors pb-1 ${isMarketActive
+              ? 'text-brand font-bold border-b-2 border-brand'
+              : 'text-text-secondary hover:text-text-primary'
+              }`}
+          >
+            Mercado
+          </Link>
+          <span className="text-text-secondary hover:text-text-primary cursor-pointer transition-colors pb-1">
+            Criadores
+          </span>
+          <span className="text-text-secondary hover:text-text-primary cursor-pointer transition-colors pb-1">
+            Aprenda
+          </span>
+        </nav>
 
         {/* Right Actions: Search, Cart, Auth */}
         <div className="flex items-center gap-4">
@@ -87,7 +105,7 @@ export const Header: React.FC = () => {
                 aria-label="Menu do colecionador"
               >
                 <img
-                  src={user.avatarUrl || '/assets/nfts/hero-ape.webp'}
+                  src={user.avatarUrl || '/assets/nfts/hero-ape.png'}
                   alt={user.displayName}
                   className="w-8 h-8 rounded-full object-cover border border-surface-border"
                 />
@@ -137,12 +155,16 @@ export const Header: React.FC = () => {
               )}
             </div>
           ) : (
-            <Link to="/login">
-              <Button size="sm" variant="brand" className="gap-2 font-mono">
-                <LogIn className="w-4 h-4" />
-                <span>Entrar</span>
-              </Button>
-            </Link>
+            <Button
+              onClick={() => setAuthModalOpen(true)}
+              size="sm"
+              variant="brand"
+              aria-label="Entrar na conta"
+              className="gap-2 font-mono font-bold uppercase tracking-wider text-xs px-5 py-2 rounded-md shadow-md hover:brightness-105 transition-all text-[#0E0C0A]"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Entrar</span>
+            </Button>
           )}
 
           {/* Mobile Menu Toggle */}
@@ -212,15 +234,26 @@ export const Header: React.FC = () => {
                 </button>
               </>
             ) : (
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full mt-2" size="sm">
-                  Entrar / Cadastrar
-                </Button>
-              </Link>
+              <Button
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  setAuthModalOpen(true)
+                }}
+                className="w-full mt-2 font-mono font-bold uppercase text-xs tracking-wider rounded-md text-[#0E0C0A]"
+                size="sm"
+              >
+                Entrar / Cadastrar
+              </Button>
             )}
           </nav>
         </div>
       )}
+
+      {/* Auth Modal (Exact Figma Page 5 & 6) */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </header>
   )
 }

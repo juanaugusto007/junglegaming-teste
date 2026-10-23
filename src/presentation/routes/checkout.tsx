@@ -79,7 +79,7 @@ function CheckoutPage() {
     } catch (err: any) {
       setFormError(
         err?.response?.data?.message ||
-          'Falha ao confirmar compra. Verifique sua conexão e tente novamente.'
+        'Falha ao confirmar compra. Verifique sua conexão e tente novamente.'
       )
     }
   }

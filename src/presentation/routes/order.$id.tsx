@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle2, ExternalLink, ArrowRight } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { useOrderDetail } from '../../application/order/useOrder'
 import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Badge'
@@ -37,136 +37,150 @@ function OrderConfirmationPage() {
     )
   }
 
+  const formattedDate = new Date(order.createdAt).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 md:py-16 flex flex-col gap-8">
-      {/* Success Hero Header */}
-      <div className="bg-surface-card border border-brand/50 p-6 sm:p-8 rounded-sm text-center flex flex-col items-center gap-4 shadow-2xl">
-        <div className="w-16 h-16 rounded-full bg-brand/10 border-2 border-brand flex items-center justify-center text-brand">
-          <CheckCircle2 className="w-10 h-10" />
-        </div>
+    <div className="max-w-xl mx-auto px-4 sm:px-6 py-12 md:py-16 flex flex-col gap-6">
+      {/* Receipt Modal Card (Exact Figma Page 4) */}
+      <div className="relative bg-[#16120F] border border-[#2B231C] p-6 sm:p-8 rounded-sm flex flex-col gap-6 shadow-2xl">
+        {/* Envelope Thank You Icon */}
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <div className="relative flex items-center justify-center">
+            <svg
+              className="w-20 h-20 text-brand"
+              viewBox="0 0 64 64"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <rect x="8" y="14" width="48" height="36" rx="2" stroke="currentColor" />
+              <path d="M8 18L32 36L56 18" stroke="currentColor" />
+              <circle cx="32" cy="30" r="11" fill="#16120F" stroke="#D88D41" strokeWidth="1.5" />
+              <text
+                x="32"
+                y="28"
+                textAnchor="middle"
+                fill="#D88D41"
+                fontSize="6"
+                fontFamily="monospace"
+                fontWeight="bold"
+              >
+                THANK
+              </text>
+              <text
+                x="32"
+                y="34"
+                textAnchor="middle"
+                fill="#D88D41"
+                fontSize="6"
+                fontFamily="monospace"
+                fontWeight="bold"
+              >
+                YOU
+              </text>
+            </svg>
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <span className="font-mono text-xs uppercase tracking-widest text-brand font-bold">
-            Transação Confirmada
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-text-primary">
-            Pedido {order.orderNumber}
+          <h1 className="text-base sm:text-lg font-mono font-bold text-text-primary tracking-wide">
+            Seus NFTs agora estão na sua carteira
           </h1>
-          <p className="text-xs font-mono text-text-secondary max-w-md mt-1">
-            Sua compra foi validada e liquidada na {order.network}. Os NFTs foram vinculados ao
-            seu perfil de colecionador.
-          </p>
         </div>
 
-        {/* Transaction Explorer Link */}
-        <div className="w-full bg-surface-elevated p-3 border border-surface-border rounded-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2 truncate">
-            <span className="text-text-muted">Hash TX:</span>
-            <span className="text-brand font-bold truncate max-w-[240px] sm:max-w-sm">
-              {order.transactionHash}
+        {/* Top Metadata Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-y border-[#2B231C] font-mono text-[11px] text-text-secondary">
+          <div className="flex flex-col">
+            <span className="text-text-muted">ID da transação</span>
+            <span className="text-text-primary font-bold truncate">
+              {order.transactionHash.slice(0, 6)}...{order.transactionHash.slice(-4)}
             </span>
           </div>
-          <a
-            href={order.blockExplorerUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 text-text-primary hover:text-brand transition-colors text-[11px] underline flex-shrink-0"
-          >
-            <span>Explorador de blocos</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        </div>
-      </div>
-
-      {/* Snapshot Receipt Details */}
-      <div className="bg-surface-card border border-surface-border p-6 sm:p-8 flex flex-col gap-6">
-        <h2 className="font-mono text-sm font-bold text-text-primary uppercase tracking-wider border-b border-surface-border pb-3">
-          Recibo Snapshot do Pedido
-        </h2>
-
-        {/* Collector Metadata */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
-          <div>
-            <span className="text-text-muted">Colecionador:</span>
-            <p className="font-semibold text-text-primary mt-0.5">{order.collectorName}</p>
+          <div className="flex flex-col">
+            <span className="text-text-muted">Data</span>
+            <span className="text-text-primary font-bold">{formattedDate}</span>
           </div>
-          <div>
-            <span className="text-text-muted">E-mail:</span>
-            <p className="font-semibold text-text-primary mt-0.5">{order.collectorEmail}</p>
+          <div className="flex flex-col">
+            <span className="text-text-muted">Total</span>
+            <span className="text-brand font-bold">{order.totalEth} ETH</span>
           </div>
-          <div>
-            <span className="text-text-muted">Carteira:</span>
-            <p className="font-semibold text-text-primary mt-0.5 truncate">{order.walletAddress}</p>
-          </div>
-          <div>
-            <span className="text-text-muted">Data/Hora:</span>
-            <p className="font-semibold text-text-primary mt-0.5">
-              {new Date(order.createdAt).toLocaleString('pt-BR')}
-            </p>
+          <div className="flex flex-col">
+            <span className="text-text-muted">Carteira</span>
+            <span className="text-text-primary font-bold">MetaMask</span>
           </div>
         </div>
 
-        {/* Purchased Items List */}
-        <div className="border-t border-surface-border pt-4 flex flex-col gap-3 font-mono text-xs">
-          <span className="text-text-muted uppercase tracking-wider text-[11px] font-bold">
-            Itens adquiridos ({order.items.length})
-          </span>
-          <div className="divide-y divide-surface-border/50">
+        {/* Transaction Details Table */}
+        <div className="flex flex-col gap-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-text-muted border-b border-[#2B231C] pb-2 font-bold uppercase tracking-wider text-[11px]">
+            <span>NFTs</span>
+            <span>Edições</span>
+            <span>Subtotal</span>
+          </div>
+
+          <div className="divide-y divide-[#2B231C]/60">
             {order.items.map((item, idx) => (
-              <div key={idx} className="py-3 flex items-center justify-between gap-4">
+              <div key={idx} className="py-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <img
                     src={item.mediaUrl}
                     alt={item.name}
-                    className="w-12 h-12 rounded-xs object-cover border border-surface-border"
+                    className="w-12 h-12 rounded-xs object-cover border border-[#2B231C]"
                   />
                   <div>
-                    <h3 className="font-bold text-text-primary">{item.name}</h3>
-                    <p className="text-[11px] text-text-muted">
-                      {item.editionType} • Qtd: {item.quantity}
-                    </p>
+                    <h2 className="font-bold text-text-primary text-xs">{item.name}</h2>
+                    <p className="text-[10px] text-text-muted">ID do token: {item.tokenId}</p>
                   </div>
                 </div>
-                <span className="font-bold text-brand">{item.subtotalEth} ETH</span>
+                <span className="text-text-muted text-xs">(x {item.quantity})</span>
+                <span className="font-bold text-brand text-xs">{item.subtotalEth} ETH</span>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Financial Summary */}
-        <div className="border-t border-surface-border pt-4 flex flex-col gap-2 font-mono text-xs">
-          <div className="flex justify-between text-text-secondary">
-            <span>Subtotal</span>
-            <span>{order.subtotalEth} ETH</span>
-          </div>
-          <div className="flex justify-between text-text-secondary">
-            <span>Desconto</span>
-            <span className="text-brand">(-) {order.discountEth} ETH</span>
-          </div>
-          <div className="flex justify-between text-text-secondary">
-            <span>Taxa de rede</span>
-            <span>{order.networkFeeEth} ETH</span>
-          </div>
-          <div className="border-t border-surface-border pt-3 flex justify-between items-center text-sm font-bold">
-            <span className="text-text-primary">Total Pago</span>
-            <span className="text-xl text-brand font-black">{order.totalEth} ETH</span>
+          {/* Network Fee & Total */}
+          <div className="border-t border-[#2B231C] pt-3 flex flex-col gap-2">
+            <div className="flex justify-between text-text-secondary text-xs">
+              <span>Taxa de rede</span>
+              <span className="text-text-primary font-bold">{order.networkFeeEth} ETH</span>
+            </div>
+            <div className="flex justify-between items-center text-sm font-bold border-t border-[#2B231C] pt-2">
+              <span className="text-text-primary">Total</span>
+              <span className="text-brand font-black text-base">{order.totalEth} ETH</span>
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-surface-border">
-          <Link to="/" className="w-full sm:w-auto flex-1">
-            <Button variant="brand" size="md" className="w-full font-mono text-xs gap-2">
-              <span>Explorar Mais Coleções</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-          <Link to="/profile" className="w-full sm:w-auto flex-1">
-            <Button variant="outline" size="md" className="w-full font-mono text-xs">
-              Ver Meu Perfil
-            </Button>
-          </Link>
-        </div>
+        {/* Confirmation Notice */}
+        <p className="text-center text-[11px] font-mono text-text-secondary leading-relaxed px-4">
+          Transação confirmada na Ethereum. A propriedade foi transferida para sua carteira conectada e registrada na rede.
+        </p>
+
+        {/* Etherscan Button (Figma Page 4) */}
+        <a
+          href={order.blockExplorerUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="w-full"
+        >
+          <button
+            type="button"
+            className="w-full bg-brand hover:bg-brand-hover text-[#0E0C0A] font-mono font-bold text-xs uppercase tracking-wider py-3 transition-colors rounded-xs flex items-center justify-center gap-2"
+          >
+            <span>Ver no Etherscan</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </button>
+        </a>
+
+        {/* Back Link */}
+        <Link
+          to="/"
+          className="text-center font-mono text-xs text-text-muted hover:text-brand transition-colors"
+        >
+          Voltar para a página inicial
+        </Link>
       </div>
     </div>
   )

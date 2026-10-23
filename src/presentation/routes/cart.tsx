@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Trash2, AlertCircle, Check, ArrowRight, ShoppingBag } from 'lucide-react'
 import { useCart } from '../../application/cart/useCart'
+import { useNftsQuery } from '../../application/nft/useNfts'
+import { NftCard } from '../components/catalog/NftCard'
 import { Button } from '../components/ui/Button'
 import { Skeleton } from '../components/ui/Badge'
 
@@ -11,6 +13,7 @@ export const Route = createFileRoute('/cart')({
 
 function CartPage() {
   const navigate = useNavigate()
+  const { data: recommendedNfts } = useNftsQuery({ limit: 5 })
   const {
     quote,
     isLoading,
@@ -296,6 +299,26 @@ function CartPage() {
           </div>
         </div>
       )}
+
+      {/* Colecionadores também viram (Exact Figma Page 2) */}
+      <div className="flex flex-col gap-6 mt-12 border-t border-surface-border pt-10">
+        <h3 className="font-mono text-base font-bold text-brand uppercase tracking-wider">
+          Colecionadores também viram
+        </h3>
+        {recommendedNfts && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+            {recommendedNfts.items.slice(0, 5).map((nft) => (
+              <NftCard key={nft.id} nft={nft} />
+            ))}
+          </div>
+        )}
+        {/* Pagination Dots */}
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <span className="w-2 h-2 rounded-full bg-brand" />
+          <span className="w-2 h-2 rounded-full bg-[#3A3026]" />
+          <span className="w-2 h-2 rounded-full bg-[#3A3026]" />
+        </div>
+      </div>
     </div>
   )
 }
